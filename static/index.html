@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DyazoX Image Generator — Making Technology Visible</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #060610;
+      --surface: #0d0d1f;
+      --card: #12122a;
+      --border: #1e1e42;
+      --accent: #6c63ff;
+      --accent2: #f7c948;
+      --green: #00e5a0;
+      --red: #ff4d6d;
+      --amber: #ffb347;
+      --text: #e8e8ff;
+      --muted: #8888bb;
+      --glow: rgba(108, 99, 255, 0.35);
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Animated background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 50% at 20% -10%, rgba(108,99,255,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 80% 110%, rgba(247,201,72,0.12) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Stars ── */
+    .stars {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: white;
+      animation: twinkle var(--dur, 3s) infinite ease-in-out;
+      opacity: 0;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0; transform: scale(0.8); }
+      50% { opacity: var(--op, 0.6); transform: scale(1); }
+    }
+
+    /* ── Layout ── */
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .logo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, rgba(108,99,255,0.2), rgba(247,201,72,0.1));
+      border: 1px solid rgba(108,99,255,0.4);
+      border-radius: 999px;
+      padding: 8px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+    .logo-badge .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse-dot 2s infinite;
+    }
+    @keyframes pulse-dot { 0%,100%{ opacity:1; } 50%{ opacity:0.4; } }
+
+    h1 {
+      font-size: clamp(32px, 5vw, 54px);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 0%, #c4c0ff 40%, var(--accent2) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+    }
+    .subtitle {
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 400;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.5;
+    }
+    .card:hover { border-color: rgba(108,99,255,0.35); }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-title .icon {
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      background: rgba(108,99,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    /* ── Inputs ── */
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    input[type="text"] {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+    input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(108,99,255,0.15);
+    }
+    input[type="text"]::placeholder { color: #555580; }
+
+    /* ── Prompts area ── */
+    .prompts-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .count-badge {
+      background: rgba(108,99,255,0.15);
+      border: 1px solid rgba(108,99,255,0.3);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 999px;
+    }
+
+    .prompt-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .prompt-row {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .scene-label {
+      min-width: 60px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(108,99,255,0.2), rgba(247,201,72,0.1));
+      border: 1px solid rgba(108,99,255,0.3);
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent2);
+      flex-shrink: 0;
+      margin-top: 0;
+    }
+    .prompt-row textarea {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      resize: vertical;
+      min-height: 68px;
+      line-height: 1.5;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+    .prompt-row textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(108,99,255,0.15);
+    }
+    .prompt-row textarea::placeholder { color: #555580; }
+    .btn-remove {
+      background: rgba(255,77,109,0.1);
+      border: 1px solid rgba(255,77,109,0.25);
+      color: var(--red);
+      border-radius: 10px;
+      width: 36px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-remove:hover { background: rgba(255,77,109,0.2); transform: scale(1.05); }
+
+    .row-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .btn-add {
+      flex: 1;
+      background: rgba(108,99,255,0.08);
+      border: 1px dashed rgba(108,99,255,0.4);
+      color: var(--accent);
+      border-radius: 12px;
+      padding: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-add:hover { background: rgba(108,99,255,0.15); border-color: var(--accent); }
+
+    .btn-paste {
+      flex: 1;
+      background: rgba(247,201,72,0.08);
+      border: 1px dashed rgba(247,201,72,0.4);
+      color: var(--accent2);
+      border-radius: 12px;
+      padding: 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-paste:hover { background: rgba(247,201,72,0.15); border-color: var(--accent2); }
+
+    /* ── Paste modal ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(6,6,16,0.85);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      width: min(640px, 95vw);
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+      animation: modalIn 0.25s ease;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.94) translateY(10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal h2 {
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(90deg, var(--text), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .modal p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+    .modal textarea {
+      flex: 1;
+      min-height: 220px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      color: var(--text);
+      resize: none;
+      outline: none;
+      line-height: 1.6;
+      transition: border-color 0.25s;
+    }
+    .modal textarea:focus { border-color: var(--accent); }
+    .modal textarea::placeholder { color: #555580; }
+    .modal-btns { display: flex; gap: 12px; }
+
+    /* ── Buttons ── */
+    .btn-primary {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--accent), #9b5de5);
+      border: none;
+      border-radius: 14px;
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 8px 32px rgba(108,99,255,0.4);
+      letter-spacing: 0.02em;
+    }
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+      transition: opacity 0.2s;
+      opacity: 0;
+    }
+    .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(108,99,255,0.5); }
+    .btn-primary:hover:not(:disabled)::before { opacity: 1; }
+    .btn-primary:active:not(:disabled) { transform: translateY(0); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-secondary {
+      flex: 1;
+      padding: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--muted);
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .btn-secondary:hover { background: var(--border); color: var(--text); }
+
+    .btn-confirm {
+      flex: 1;
+      padding: 12px;
+      background: linear-gradient(135deg, var(--accent), #9b5de5);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .btn-confirm:hover { transform: translateY(-1px); }
+
+    /* ── Progress ── */
+    #progress-section {
+      display: none;
+    }
+    #progress-section.visible { display: block; }
+
+    .progress-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .progress-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .progress-count {
+      font-size: 24px;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .progress-track {
+      height: 8px;
+      background: var(--surface);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 999px;
+      width: 0%;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 12px rgba(108,99,255,0.5);
+    }
+    .progress-label {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    /* ── Log ── */
+    .log-container {
+      margin-top: 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+    .log-container::-webkit-scrollbar { width: 4px; }
+    .log-container::-webkit-scrollbar-track { background: transparent; }
+    .log-container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .log-entry {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      animation: fadeEntry 0.3s ease;
+    }
+    @keyframes fadeEntry { from { opacity:0; transform: translateX(-6px); } to { opacity:1; transform: translateX(0); } }
+    .log-entry:last-child { border-bottom: none; }
+    .log-entry.success .log-icon { color: var(--green); }
+    .log-entry.error .log-icon { color: var(--red); }
+    .log-entry.retrying .log-icon { color: var(--amber); }
+    .log-entry.generating .log-icon { color: var(--accent); }
+    .log-entry.done .log-icon { color: var(--accent2); }
+    .log-icon { font-size: 14px; flex-shrink: 0; margin-top: 2px; }
+    .log-text { color: var(--muted); }
+    .log-text .highlight { color: var(--text); font-weight: 600; }
+
+    /* ── Done summary ── */
+    .done-banner {
+      display: none;
+      background: linear-gradient(135deg, rgba(0,229,160,0.1), rgba(108,99,255,0.1));
+      border: 1px solid rgba(0,229,160,0.3);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      margin-top: 20px;
+    }
+    .done-banner.visible { display: block; animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    @keyframes popIn { from { opacity:0; transform: scale(0.9); } to { opacity:1; transform: scale(1); } }
+    .done-banner .done-emoji { font-size: 48px; margin-bottom: 12px; }
+    .done-banner h3 { font-size: 22px; font-weight: 800; color: var(--green); margin-bottom: 6px; }
+    .done-banner p { color: var(--muted); font-size: 14px; }
+    .folder-path {
+      display: inline-block;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 13px;
+      color: var(--accent2);
+      font-weight: 600;
+      margin-top: 10px;
+      word-break: break-all;
+    }
+
+    /* ── Tip box ── */
+    .tip-box {
+      background: linear-gradient(135deg, rgba(247,201,72,0.06), rgba(108,99,255,0.06));
+      border: 1px solid rgba(247,201,72,0.2);
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .tip-icon { font-size: 28px; flex-shrink: 0; }
+    .tip-content h4 { font-size: 14px; font-weight: 700; color: var(--accent2); margin-bottom: 4px; }
+    .tip-content p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    /* ── Scene grid preview ── */
+    .scene-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .scene-chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      transition: all 0.3s;
+    }
+    .scene-chip.active {
+      background: rgba(108,99,255,0.15);
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 8px rgba(108,99,255,0.2);
+    }
+    .scene-chip.done-chip {
+      background: rgba(0,229,160,0.1);
+      border-color: rgba(0,229,160,0.4);
+      color: var(--green);
+    }
+    .scene-chip.error-chip {
+      background: rgba(255,77,109,0.1);
+      border-color: rgba(255,77,109,0.3);
+      color: var(--red);
+    }
+    /* ── Chrome connect card ── */
+    .chrome-card {
+      background: linear-gradient(135deg, rgba(0,229,160,0.06), rgba(108,99,255,0.06));
+      border: 1px solid rgba(0,229,160,0.25);
+      border-radius: 20px;
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .chrome-status-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--red);
+      box-shadow: 0 0 8px var(--red);
+      flex-shrink: 0;
+      transition: background 0.4s, box-shadow 0.4s;
+    }
+    .chrome-status-dot.connected {
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse-dot 2s infinite;
+    }
+    .chrome-info { flex: 1; min-width: 200px; }
+    .chrome-info h4 { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+    .chrome-info p  { font-size: 12px; color: var(--muted); line-height: 1.5; }
+    .btn-chrome {
+      padding: 11px 22px;
+      background: linear-gradient(135deg, #00e5a0, #00b37d);
+      border: none;
+      border-radius: 12px;
+      color: #050f0a;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 16px rgba(0,229,160,0.3);
+      white-space: nowrap;
+    }
+    .btn-chrome:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,229,160,0.4); }
+    .btn-chrome:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  </style>
+</head>
+<body>
+
+<!-- Stars -->
+<div class="stars" id="stars"></div>
+
+<!-- Paste Modal -->
+<div class="modal-overlay" id="paste-modal">
+  <div class="modal">
+    <h2>📋 Paste All Prompts at Once</h2>
+    <p>Paste all your image prompts below — <strong>one prompt per line</strong>. Each line becomes one scene. Empty lines are ignored.</p>
+    <textarea id="bulk-paste-area" placeholder="Ultra realistic QR code floating in mid air, glowing digital energy...&#10;Bold futuristic typography showing OTP in glowing neon letters...&#10;Person holding smartphone, typing phone number...&#10;(one prompt per line)"></textarea>
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+      <button class="btn-confirm" onclick="applyBulkPaste()">✅ Import Prompts</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrapper">
+  <!-- Header -->
+  <header>
+    <div class="logo-badge">
+      <div class="dot"></div>
+      DyazoX Automation Studio
+    </div>
+    <h1>AI Image Generator</h1>
+    <p class="subtitle">Paste your scene prompts → Generate all images → Auto-save to folder</p>
+  </header>
+
+  <!-- Chrome Connection Card -->
+  <div class="chrome-card" id="chrome-card">
+    <div class="chrome-status-dot" id="chrome-dot"></div>
+    <div class="chrome-info">
+      <h4 id="chrome-status-text">Your Chrome is NOT connected</h4>
+      <p id="chrome-status-sub">Click the button to connect your existing Chrome (with ChatGPT already logged in). Chrome will restart once — all logins are preserved.</p>
+    </div>
+    <button class="btn-chrome" id="chrome-btn" onclick="connectChrome()">🔗 Connect My Chrome</button>
+  </div>
+
+  <!-- Tip -->
+  <div class="tip-box">
+    <div class="tip-icon">💡</div>
+    <div class="tip-content">
+      <h4>How to use this tool</h4>
+      <p>Enter your Short topic name, then paste your image prompts scene by scene (or use "Paste All" for bulk import). Hit Generate and all images will automatically save to a folder on your computer.</p>
+    </div>
+  </div>
+
+  <!-- Step 1: Topic -->
+  <div class="card">
+    <div class="card-title">
+      <div class="icon">1</div>
+      Short Topic Name
+    </div>
+    <label for="topic-input">Topic (used as folder name)</label>
+    <input type="text" id="topic-input" placeholder="e.g. How UPI Payments Work" />
+  </div>
+
+  <!-- Step 2: Prompts -->
+  <div class="card">
+    <div class="card-title">
+      <div class="icon">2</div>
+      Scene Image Prompts
+    </div>
+
+    <div class="prompts-header">
+      <label style="margin:0">Enter each scene prompt below</label>
+      <div class="count-badge" id="count-badge">0 scenes</div>
+    </div>
+
+    <div class="prompt-list" id="prompt-list"></div>
+
+    <div class="row-actions">
+      <button class="btn-add" onclick="addPromptRow()">➕ Add Scene</button>
+      <button class="btn-paste" onclick="openModal()">📋 Paste All</button>
+    </div>
+  </div>
+
+  <!-- Generate Button -->
+  <button class="btn-primary" id="generate-btn" onclick="startGeneration()">
+    🚀 Generate All Images
+  </button>
+
+  <!-- Progress -->
+  <div id="progress-section">
+    <div class="card" style="margin-top:24px">
+      <div class="progress-header">
+        <div class="progress-title">⚡ Generating Images...</div>
+        <div class="progress-count" id="progress-count">0 / 0</div>
+      </div>
+
+      <div id="scene-grid" class="scene-grid"></div>
+
+      <div style="margin-top: 20px;">
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-label" id="progress-label">Starting...</div>
+      </div>
+
+      <div class="log-container" id="log-container"></div>
+
+      <div class="done-banner" id="done-banner">
+        <div class="done-emoji">🎉</div>
+        <h3>All Images Generated!</h3>
+        <p>Your images have been saved to:</p>
+        <div class="folder-path" id="folder-display"></div>
+        <p style="margin-top:12px; font-size:13px;">Open <strong>Finder</strong> → navigate to your project folder to find the images!</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ── Stars ── */
+  const starsContainer = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 2 + 1;
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}%; top:${Math.random()*100}%;
+      --dur:${Math.random()*4+2}s;
+      --op:${Math.random()*0.6+0.1};
+      animation-delay:${Math.random()*5}s;
+    `;
+    starsContainer.appendChild(s);
+  }
+
+  /* ── Chrome connection ── */
+  function updateChromeStatus(connected) {
+    const dot  = document.getElementById('chrome-dot');
+    const text = document.getElementById('chrome-status-text');
+    const sub  = document.getElementById('chrome-status-sub');
+    const btn  = document.getElementById('chrome-btn');
+    if (connected) {
+      dot.classList.add('connected');
+      text.textContent = '✅ Your Chrome is connected!';
+      sub.textContent  = 'Playwright will use YOUR Chrome — ChatGPT is already logged in. No login screen!';
+      btn.textContent  = '🔗 Re-connect Chrome';
+      btn.disabled = false;
+    } else {
+      dot.classList.remove('connected');
+      text.textContent = 'Your Chrome is NOT connected';
+      sub.textContent  = 'Click the button to connect your existing Chrome (with ChatGPT already logged in). Chrome will restart once — all logins are preserved.';
+      btn.disabled = false;
+    }
+  }
+
+  async function connectChrome() {
+    const btn = document.getElementById('chrome-btn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Connecting...';
+    document.getElementById('chrome-status-text').textContent = 'Restarting Chrome with debug port...';
+    document.getElementById('chrome-status-sub').textContent = 'Please wait — Chrome will close and reopen automatically. This takes about 15 seconds.';
+    try {
+      await fetch('/setup-chrome', { method: 'POST' });
+      // Poll until port is open
+      for (let i = 0; i < 10; i++) {
+        await new Promise(r => setTimeout(r, 2000));
+        const res = await fetch('/chrome-status');
+        const data = await res.json();
+        if (data.connected) { updateChromeStatus(true); return; }
+      }
+      // Port still not open — show partial success
+      document.getElementById('chrome-status-text').textContent = '⏳ Chrome is starting...';
+      document.getElementById('chrome-status-sub').textContent = 'Wait a few more seconds, then click Generate. It should connect automatically.';
+      btn.textContent = '🔗 Re-connect Chrome';
+      btn.disabled = false;
+    } catch(e) {
+      btn.textContent = '🔗 Connect My Chrome';
+      btn.disabled = false;
+    }
+  }
+
+  // Check Chrome status on page load
+  fetch('/chrome-status').then(r => r.json()).then(d => updateChromeStatus(d.connected)).catch(() => {});
+
+  /* ── Prompt rows ── */
+  let promptCount = 0;
+  const chipStates = {}; // scene index -> state
+
+  function addPromptRow(value = '') {
+    promptCount++;
+    const idx = promptCount;
+    const list = document.getElementById('prompt-list');
+
+    const row = document.createElement('div');
+    row.className = 'prompt-row';
+    row.id = `row-${idx}`;
+    row.innerHTML = `
+      <div class="scene-label">S${String(idx).padStart(2,'0')}</div>
+      <textarea placeholder="Paste your image prompt for scene ${idx} here..." rows="2">${value}</textarea>
+      <button class="btn-remove" onclick="removeRow(${idx})" title="Remove scene">✕</button>
+    `;
+    list.appendChild(row);
+    updateCount();
+    if (!value) row.querySelector('textarea').focus();
+  }
+
+  function removeRow(idx) {
+    const row = document.getElementById(`row-${idx}`);
+    if (row) {
+      row.style.animation = 'none';
+      row.style.opacity = '0';
+      row.style.transform = 'translateX(10px)';
+      row.style.transition = 'all 0.2s';
+      setTimeout(() => { row.remove(); updateCount(); }, 200);
+    }
+  }
+
+  function updateCount() {
+    const rows = document.querySelectorAll('.prompt-row');
+    const n = rows.length;
+    document.getElementById('count-badge').textContent = `${n} scene${n !== 1 ? 's' : ''}`;
+  }
+
+  function getPrompts() {
+    return Array.from(document.querySelectorAll('.prompt-row textarea'))
+      .map(t => t.value.trim())
+      .filter(v => v.length > 0);
+  }
+
+  /* ── Modal ── */
+  function openModal() {
+    document.getElementById('paste-modal').classList.add('active');
+    document.getElementById('bulk-paste-area').focus();
+  }
+  function closeModal() {
+    document.getElementById('paste-modal').classList.remove('active');
+    document.getElementById('bulk-paste-area').value = '';
+  }
+  function applyBulkPaste() {
+    const text = document.getElementById('bulk-paste-area').value;
+    const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+    if (lines.length === 0) { closeModal(); return; }
+
+    // Clear existing rows
+    document.getElementById('prompt-list').innerHTML = '';
+    promptCount = 0;
+
+    lines.forEach(line => addPromptRow(line));
+    closeModal();
+  }
+
+  // Close modal on overlay click
+  document.getElementById('paste-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  /* ── Generation ── */
+  function startGeneration() {
+    const topic = document.getElementById('topic-input').value.trim();
+    const prompts = getPrompts();
+
+    if (!topic) {
+      alert('Please enter a topic name first!');
+      document.getElementById('topic-input').focus();
+      return;
+    }
+    if (prompts.length === 0) {
+      alert('Please add at least one scene prompt!');
+      return;
+    }
+
+    // UI setup
+    document.getElementById('generate-btn').disabled = true;
+    document.getElementById('generate-btn').textContent = '⏳ Generating...';
+    document.getElementById('progress-section').classList.add('visible');
+    document.getElementById('log-container').innerHTML = '';
+    document.getElementById('done-banner').classList.remove('visible');
+
+    // Build scene chip grid
+    buildSceneGrid(prompts.length);
+
+    fetch('/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic, prompts })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.error) {
+        alert('Error: ' + data.error);
+        resetBtn();
+        return;
+      }
+      document.getElementById('folder-display').textContent = data.folder;
+      listenToProgress(prompts.length);
+    })
+    .catch(err => {
+      alert('Server error: ' + err.message + '\n\nMake sure the Python server is running!');
+      resetBtn();
+    });
+  }
+
+  function buildSceneGrid(total) {
+    const grid = document.getElementById('scene-grid');
+    grid.innerHTML = '';
+    for (let i = 1; i <= total; i++) {
+      const chip = document.createElement('div');
+      chip.className = 'scene-chip';
+      chip.id = `chip-${i}`;
+      chip.textContent = `S${String(i).padStart(2,'0')}`;
+      grid.appendChild(chip);
+    }
+  }
+
+  function listenToProgress(total) {
+    const evtSource = new EventSource('/progress');
+
+    evtSource.onmessage = function(e) {
+      const data = JSON.parse(e.data);
+
+      if (data.status === 'finished') {
+        evtSource.close();
+        onGenerationDone();
+        return;
+      }
+
+      appendLog(data);
+
+      if (data.scene > 0) {
+        const chip = document.getElementById(`chip-${data.scene}`);
+        if (chip) {
+          chip.classList.remove('active', 'done-chip', 'error-chip');
+          if (data.status === 'success') chip.classList.add('done-chip');
+          else if (data.status === 'error') chip.classList.add('error-chip');
+          else chip.classList.add('active');
+        }
+
+        if (data.status === 'success' || data.status === 'error') {
+          const doneCount = document.querySelectorAll('.done-chip, .error-chip').length;
+          const pct = Math.round((doneCount / total) * 100);
+          document.getElementById('progress-fill').style.width = pct + '%';
+          document.getElementById('progress-count').textContent = `${doneCount} / ${total}`;
+          document.getElementById('progress-label').textContent = `${pct}% complete`;
+        }
+      }
+    };
+
+    evtSource.onerror = function() {
+      evtSource.close();
+      onGenerationDone();
+    };
+  }
+
+  function appendLog(data) {
+    const log = document.getElementById('log-container');
+    const entry = document.createElement('div');
+    entry.className = `log-entry ${data.status}`;
+
+    const icons = {
+      generating: '⚡',
+      success: '✅',
+      error: '❌',
+      retrying: '⚠️',
+      done: '🎉',
+    };
+
+    entry.innerHTML = `
+      <span class="log-icon">${icons[data.status] || '•'}</span>
+      <span class="log-text">${data.message}</span>
+    `;
+    log.appendChild(entry);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function onGenerationDone() {
+    document.getElementById('done-banner').classList.add('visible');
+    document.getElementById('generate-btn').disabled = false;
+    document.getElementById('generate-btn').textContent = '🚀 Generate All Images';
+    document.getElementById('progress-fill').style.width = '100%';
+    document.getElementById('progress-label').textContent = '100% complete ✅';
+  }
+
+  function resetBtn() {
+    document.getElementById('generate-btn').disabled = false;
+    document.getElementById('generate-btn').textContent = '🚀 Generate All Images';
+  }
+
+  // Start with 1 empty row
+  addPromptRow();
+</script>
+</body>
+</html>

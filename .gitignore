@@ -1,0 +1,36 @@
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+dist/
+build/
+
+# ── Virtual Environment ───────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+
+# ── Generated Image Output Folders ───────────────────────────
+DyazoX_*/
+
+# ── Chrome Profile (contains personal login sessions) ────────
+chrome_profile/
+
+# ── macOS ─────────────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ── IDE / Editor ──────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Logs & Temp ───────────────────────────────────────────────
+*.log
+*.tmp
